@@ -10,9 +10,14 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 });
 
 Route::get('/sneakers', [SneakerController::class, 'index'])->name('sneakers.index');
+
+Route::post('/sneakers', [SneakerController::class, 'handleAction'])
+    ->name('sneakers.action');
 
 require __DIR__.'/settings.php';

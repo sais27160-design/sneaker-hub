@@ -1,4 +1,5 @@
 
+@vite(['resources/css/app.css'])
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +33,7 @@
             <!-- Navigation links -->
             <div class="hidden items-center gap-8 text-sm font-medium text-gray-300 md:flex">
                 <a href="/" class="transition hover:text-purple-400">Home</a>
-                <a href="#featured" class="transition hover:text-purple-400">Sneakers</a>
+                <a href="{{ route('sneakers.index') }}" class="transition hover:text-purple-400">Sneakers</a>
                 <a href="#brands" class="transition hover:text-purple-400">Brands</a>
                 <a href="#about" class="transition hover:text-purple-400">About</a>
             </div>
@@ -88,8 +89,8 @@
 
                     <div class="mt-10 flex flex-wrap gap-4">
 
-                        <a href="/login"
-                           class="rounded-full bg-purple-600 px-8 py-4 font-bold transition hover:-translate-y-1 hover:bg-purple-500">
+                       <a href="/sneakers"
+                            class="rounded-full bg-purple-600 px-8 py-4 font-bold transition hover:-translate-y-1 hover:bg-purple-500">
                             Explore Sneakers →
                         </a>
 
@@ -182,8 +183,8 @@
                         </p>
                     </div>
 
-                    <a href="/login"
-                       class="font-semibold text-purple-400 transition hover:text-purple-300">
+                    <a href="{{ route('sneakers.index') }}"
+                        class="font-semibold text-purple-400 transition hover:text-purple-300">
                         View All Sneakers →
                     </a>
 
@@ -217,9 +218,9 @@
 
                                 <span class="text-lg font-bold">Explore</span>
 
-                                <a href="/login"
-                                   class="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold transition hover:bg-purple-600">
-                                    View →
+                                <a href="{{ route('sneakers.index') }}"
+                                    class="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold transition hover:bg-purple-600">
+                                        View →
                                 </a>
 
                             </div>

@@ -15,6 +15,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 /**
  * @property int $id
  * @property string $name
@@ -52,5 +53,10 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }
