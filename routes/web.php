@@ -1,16 +1,16 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SneakerController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -30,5 +30,16 @@ Route::post('/cart/update', [CartController::class, 'update'])
 
 Route::post('/cart/remove', [CartController::class, 'remove'])
     ->name('cart.remove');
+
+    // Checkout
+Route::middleware('auth')->group(function () {
+
+Route::get('/checkout', [CheckoutController::class, 'index'])
+    ->name('checkout.index');
+
+Route::post('/checkout', [CheckoutController::class, 'store'])
+    ->name('checkout.store');
+
+});
 
 require __DIR__.'/settings.php';
