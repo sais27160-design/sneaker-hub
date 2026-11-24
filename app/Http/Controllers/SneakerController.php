@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class SneakerController extends Controller
 {
+    
     public function index()
     {
         $sneakers = Sneaker::with(['brand', 'sizes'])->get();
@@ -25,9 +26,30 @@ class SneakerController extends Controller
             }
         }
 
+        // Load the current user's wishlist for the drawer
+        $wishlistItems = collect();
+
+        if (auth()->check()) {
+            $wishlistItems = DB::table('wishlists')
+                ->join('sneakers', 'wishlists.sneaker_id', '=', 'sneakers.id')
+                ->leftJoin('brands', 'sneakers.brand_id', '=', 'brands.id')
+                ->where('wishlists.user_id', auth()->id())
+                ->select(
+                    'wishlists.id as wishlist_id',
+                    'sneakers.id as sneaker_id',
+                    'sneakers.name',
+                    'sneakers.price',
+                    'sneakers.image',
+                    'brands.name as brand_name'
+                )
+                ->orderByDesc('wishlists.created_at')
+                ->get();
+        }
+
         return view('sneakers.index', compact(
             'sneakers',
-            'selectedSneaker'
+            'selectedSneaker',
+            'wishlistItems'
         ));
     }
 
@@ -98,15 +120,33 @@ class SneakerController extends Controller
                 ->with('success', 'Sneaker added to your cart!');
         }
 
+        
         // Add sneaker to wishlist
         if ($action === 'add_to_wishlist') {
-            if (!$request->user()) {
-                return redirect()->guest(route('login'));
-            }
 
             $data = $request->validate([
                 'sneaker_id' => 'required|integer|exists:sneakers,id',
             ]);
+
+            // Guest: remember the sneaker and ask them to log in
+            if (!$request->user()) {
+                $request->session()->put(
+                    'pending_wishlist_sneaker_id',
+                    $data['sneaker_id']
+                );
+
+                $request->session()->put(
+                    'selected_sneaker_id',
+                    $data['sneaker_id']
+                );
+
+                return redirect()->guest(route('login'));
+            }
+
+            $alreadySaved = DB::table('wishlists')
+                ->where('user_id', $request->user()->id)
+                ->where('sneaker_id', $data['sneaker_id'])
+                ->exists();
 
             DB::table('wishlists')->updateOrInsert(
                 [
@@ -121,9 +161,35 @@ class SneakerController extends Controller
 
             return redirect()
                 ->route('sneakers.index')
-                ->with('success', 'Sneaker added to your wishlist!');
+                ->with(
+                    'success',
+                    $alreadySaved
+                        ? 'This sneaker is already in your wishlist.'
+                        : 'Sneaker added to your wishlist!'
+                );
         }
 
+        // Remove sneaker from wishlist
+        if ($action === 'remove_from_wishlist') {
+
+            if (!$request->user()) {
+                return redirect()->guest(route('login'));
+            }
+
+            $data = $request->validate([
+                'sneaker_id' => 'required|integer|exists:sneakers,id',
+            ]);
+
+            DB::table('wishlists')
+                ->where('user_id', $request->user()->id)
+                ->where('sneaker_id', $data['sneaker_id'])
+                ->delete();
+
+            return redirect()
+                ->to(route('sneakers.index') . '#wishlist-drawer')
+                ->with('success', 'Sneaker removed from your wishlist.');
+        }
         abort(400, 'Invalid action.');
-    }
+
+    }    
 }
