@@ -309,6 +309,16 @@
                     </span>
 
                 </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="rounded-full border border-red-500/40 px-5 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"
+                    >
+                        Log Out
+                    </button>
+                </form>
 
             @else
 
