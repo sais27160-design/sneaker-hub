@@ -8,6 +8,19 @@
     <title>SneakerHub - Sneakers</title>
 
     @vite(['resources/css/app.css'])
+
+    <style>
+    .size-select-wrapper .size-arrow-box {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: border-color 0.2s ease;
+    }
+
+    .size-select-wrapper:hover .size-arrow-box,
+    .size-select-wrapper:focus-within .size-arrow-box {
+        border-color: #A855F7;
+    }
+</style>
+
 </head>
 
 <body class="min-h-screen bg-[#08070d] text-white">
@@ -37,6 +50,17 @@
                     About
                 </a>
             </nav>
+
+             <a href="{{ route('cart.index') }}"
+                class="rounded-full border border-purple-500/50 px-5 py-2 text-sm font-semibold text-purple-400 transition hover:bg-purple-600 hover:text-white">
+
+            
+                    🛒 Cart
+
+                <span class="ml-1 rounded-full bg-purple-600 px-2 py-1 text-xs text-white">
+                    {{ collect(session('cart', []))->sum('quantity') }}
+                </span>
+            </a>
 
             <a href="{{ route('home') }}"
                 class="rounded-full border border-white/20 px-5 py-2 text-sm transition hover:border-purple-400 hover:text-purple-400">
@@ -169,34 +193,70 @@
                         <input type="hidden" name="sneaker_id" value="{{ $selectedSneaker->id }}">
 
 
-                        <!-- Shoe size -->
-                        <label for="size_id" class="mb-3 block text-sm font-semibold">
-                            Choose your EU shoe size
-                        </label>
+                       
+                    <!-- Shoe size -->
+                    <label for="size_id" class="mb-3 block text-sm font-semibold">
+                        Choose your EU shoe size
+                    </label>
 
-                        <select
-                            name="size_id"
-                            id="size_id"
-                            required
-                            class="w-full rounded-xl border border-white/10 bg-[#191522] px-4 py-4 text-white outline-none transition focus:border-purple-500"
-                        >
+                    <div class="size-select-wrapper" style="position: relative; width: 100%;">
 
-                            <option value="" selected disabled>
-                                Choose your size
+                    <select
+                        name="size_id"
+                        id="size_id"
+                        required
+                        style="appearance: none; -webkit-appearance: none; background-image: none;"
+                        class="w-full rounded-xl border border-white/10 bg-[#191522] px-4 py-4 pr-16 text-white outline-none focus:border-purple-500"
+                    >
+                        <option value="" selected disabled>Choose your size</option>
+
+                        @foreach ($selectedSneaker->sizes->sortBy('size') as $size)
+                            <option
+                                value="{{ $size->id }}"
+                                @disabled($size->stock_quantity <= 0)
+                            >
+                                EU {{ rtrim(rtrim(number_format((float) $size->size, 1, '.', ''), '0'), '.') }}
                             </option>
+                        @endforeach
+                    </select>
 
-                            @foreach ($selectedSneaker->sizes->sortBy('size') as $size)
+                    <!-- Arrow square -->
+                    <span
+                        class="size-arrow-box"
+                        style="
+                            position: absolute;
+                            right: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            width: 40px;
+                            height: 40px;
+                            min-width: 40px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-sizing: border-box;
+                            border-radius: 12px;
+                            background: #211b2b;
+                            pointer-events: none;
+                        "
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#FFFFFF"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </span>
 
-                                <option
-                                    value="{{ $size->id }}"
-                                    @disabled($size->stock_quantity <= 0)
-                                >
-                                    EU {{ rtrim(rtrim(number_format((float) $size->size, 1, '.', ''), '0'), '.') }}
-                                </option>
+                </div>
 
-                            @endforeach
 
-                        </select>
 
 
                         <!-- Add to Cart -->
