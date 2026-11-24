@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SneakerController;
+use App\Http\Controllers\CartController;
 
 
 Route::get('/', function () {
@@ -19,5 +20,15 @@ Route::get('/sneakers', [SneakerController::class, 'index'])->name('sneakers.ind
 
 Route::post('/sneakers', [SneakerController::class, 'handleAction'])
     ->name('sneakers.action');
+
+    // Shopping Cart
+Route::get('/cart', [CartController::class, 'index'])
+    ->name('cart.index');
+
+Route::post('/cart/update', [CartController::class, 'update'])
+    ->name('cart.update');
+
+Route::post('/cart/remove', [CartController::class, 'remove'])
+    ->name('cart.remove');
 
 require __DIR__.'/settings.php';
