@@ -306,13 +306,12 @@
 
 
                     <!-- Checkout -->
-                    <button
-                        type="button"
-                        disabled
-                        class="w-full cursor-not-allowed rounded-full bg-purple-600 px-6 py-4 font-bold text-white opacity-60"
+                    <a
+                        href="{{ route('checkout.index') }}"
+                        class="block w-full rounded-full bg-purple-600 px-6 py-4 text-center font-bold text-white transition hover:bg-purple-500"
                     >
-                        Checkout Coming Next
-                    </button>
+                        Proceed to Checkout
+                    </a>
 
                     <p class="mt-4 text-center text-xs leading-6 text-gray-500">
                         Shipping and applicable taxes will be calculated during checkout.
