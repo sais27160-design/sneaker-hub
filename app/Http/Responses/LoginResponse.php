@@ -1,10 +1,10 @@
-
 <?php
 
 namespace App\Http\Responses;
 
 use App\Models\Sneaker;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 class LoginResponse implements LoginResponseContract
@@ -33,22 +33,23 @@ class LoginResponse implements LoginResponseContract
                 ]
             );
 
-            // Reopen the sneaker the customer wanted to save
             $request->session()->put(
                 'selected_sneaker_id',
                 $pendingSneakerId
             );
 
-            return redirect()
-                ->route('sneakers.index')
-                ->with('success', 'Sneaker added to your wishlist!');
+            $request->session()->flash(
+                'success',
+                'Sneaker added to your wishlist!'
+            );
         }
 
-        // Normal login redirection
+        // Admin redirect
         if ($user->role === 'admin') {
-            return redirect('/admin/dashboard');
+            return Inertia::location(url('/admin/dashboard'));
         }
 
-        return redirect('/sneakers');
+        // Normal user: open the Blade storefront
+        return Inertia::location(route('sneakers.index'));
     }
 }
