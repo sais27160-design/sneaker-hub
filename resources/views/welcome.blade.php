@@ -1,5 +1,3 @@
-
-@vite(['resources/css/app.css'])
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,15 +39,34 @@
             <!-- Authentication buttons -->
             <div class="flex items-center gap-3">
 
-                <a href="/login"
-                   class="hidden rounded-full px-5 py-2.5 text-sm font-semibold transition hover:bg-white/10 sm:block">
-                    Login
-                </a>
+                @guest
+                    <a href="{{ route('login') }}"
+                       class="hidden rounded-full px-5 py-2.5 text-sm font-semibold transition hover:bg-white/10 sm:block">
+                        Login
+                    </a>
 
-                <a href="/register"
-                   class="rounded-full bg-purple-600 px-5 py-2.5 text-sm font-bold transition hover:bg-purple-500">
-                    Sign Up
-                </a>
+                    <a href="{{ route('register') }}"
+                       class="rounded-full bg-purple-600 px-5 py-2.5 text-sm font-bold transition hover:bg-purple-500">
+                        Sign Up
+                    </a>
+                @else
+                    <div class="flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-sm font-bold text-white">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </span>
+                        <span class="max-w-32 truncate text-sm font-semibold text-white">
+                            {{ auth()->user()->name }}
+                        </span>
+                    </div>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                                class="rounded-full border border-red-500/40 px-5 py-2.5 text-sm font-semibold text-red-400 transition hover:bg-red-500 hover:text-white">
+                            Log Out
+                        </button>
+                    </form>
+                @endguest
 
             </div>
 
@@ -255,7 +272,7 @@
 
                                 <span class="text-lg font-bold">Explore</span>
 
-                                <a href="/login"
+                                <a href="{{ route('sneakers.index') }}"
                                    class="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold transition hover:bg-purple-600">
                                     View →
                                 </a>
@@ -292,7 +309,7 @@
 
                                 <span class="text-lg font-bold">Explore</span>
 
-                                <a href="/login"
+                                <a href="{{ route('sneakers.index') }}"
                                    class="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold transition hover:bg-purple-600">
                                     View →
                                 </a>
@@ -362,10 +379,17 @@
                     brands, and styles.
                 </p>
 
-                <a href="/register"
-                   class="mt-8 inline-block rounded-full bg-white px-8 py-4 font-bold text-purple-700 transition hover:-translate-y-1 hover:bg-gray-100">
-                    Create Your Account →
-                </a>
+                @guest
+                    <a href="{{ route('register') }}"
+                       class="mt-8 inline-block rounded-full bg-white px-8 py-4 font-bold text-purple-700 transition hover:-translate-y-1 hover:bg-gray-100">
+                        Create Your Account →
+                    </a>
+                @else
+                    <a href="{{ route('sneakers.index') }}"
+                       class="mt-8 inline-block rounded-full bg-white px-8 py-4 font-bold text-purple-700 transition hover:-translate-y-1 hover:bg-gray-100">
+                        Explore Sneakers →
+                    </a>
+                @endguest
 
             </div>
 
@@ -389,15 +413,28 @@
                 </p>
             </div>
 
-            <div class="flex gap-6 text-sm text-gray-400">
+            <div class="flex items-center gap-6 text-sm text-gray-400">
 
-                <a href="/login" class="transition hover:text-white">
-                    Login
-                </a>
+                @guest
+                    <a href="{{ route('login') }}" class="transition hover:text-white">
+                        Login
+                    </a>
 
-                <a href="/register" class="transition hover:text-white">
-                    Register
-                </a>
+                    <a href="{{ route('register') }}" class="transition hover:text-white">
+                        Register
+                    </a>
+                @else
+                    <a href="{{ route('sneakers.index') }}" class="transition hover:text-white">
+                        Sneakers
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="transition hover:text-white">
+                            Log Out
+                        </button>
+                    </form>
+                @endguest
 
             </div>
 
