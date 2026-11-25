@@ -292,23 +292,25 @@
 
                 <!-- User profile -->
 
-                <a href="{{ route('dashboard') }}"
+                @if (auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}"
+                    class="rounded-full border border-purple-500/50 px-4 py-2 text-sm font-semibold text-purple-400 transition hover:bg-purple-600 hover:text-white">
+                        Admin Dashboard
+                    </a>
+                @endif
 
-                    class="flex items-center gap-2 rounded-full border border-white/20 px-3 py-2 transition hover:border-purple-400">
+                <!-- User profile (not clickable) -->
+                    <div class="flex cursor-default items-center gap-2 rounded-full border border-white/20 px-3 py-2">
 
-                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-sm font-bold text-white">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-sm font-bold text-white">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </span>
 
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        <span class="max-w-24 truncate text-sm font-semibold text-white">
+                            {{ auth()->user()->name }}
+                        </span>
 
-                    </span>
-
-                    <span class="max-w-24 truncate text-sm font-semibold text-white">
-
-                        {{ auth()->user()->name }}
-
-                    </span>
-
-                </a>
+                    </div>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 
