@@ -49,30 +49,60 @@ class AdminSneakerController extends Controller
         $this->ensureAdmin();
 
         $data = $this->validatedSneakerData($request);
+        $sizeStocks = $data['sizes'];
 
-        DB::transaction(function () use ($data) {
-            $data['model'] = $data['name'];
-            $sneaker = Sneaker::create($data);
-            $this->createSizeRows($sneaker, (int) $data['stock_quantity']);
-        });
+        unset($data['sizes']);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Sneaker added successfully.');
+        $data['stock_quantity'] = array_sum($sizeStocks);
+
+        DB::transaction(function () use ($data, $sizeStocks) {
+            $brand = Brand::firstOrCreate(
+            ['name' => trim($data['brand_name'])],
+            ['type' => 'Other']
+        );
+
+        unset($data['brand_name']);
+        $data['brand_id'] = $brand->id;
+
+        $data['model'] = $data['name'];
+        $sneaker = Sneaker::create($data);
+
+                foreach ($sizeStocks as $size => $stock) {
+                $sneaker->sizes()->create([
+                    'size' => $size,
+                    'stock_quantity' => (int) $stock,
+                ]);
+            }
+  }); 
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Sneaker added successfully.');
     }
-
     public function update(Request $request, Sneaker $sneaker)
     {
         $this->ensureAdmin();
 
         $data = $this->validatedSneakerData($request);
-        $newTotalStock = (int) $data['stock_quantity'];
+        $sizeStocks = $data['sizes'];
 
-        DB::transaction(function () use ($sneaker, $data, $newTotalStock) {
+        unset($data['sizes']);
+
+        $data['stock_quantity'] = array_sum($sizeStocks);
+
+        DB::transaction(function () use ($sneaker, $data, $sizeStocks) {
             $data['model'] = $data['name'];
             $sneaker->update($data);
-            $this->adjustSizeStock($sneaker, $newTotalStock);
+
+            foreach ($sizeStocks as $size => $stock) {
+                $sneaker->sizes()->updateOrCreate(
+                    ['size' => $size],
+                    ['stock_quantity' => (int) $stock]
+                );
+            }
         });
 
-        return redirect()->route('admin.dashboard')->with('success', 'Sneaker updated successfully.');
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Sneaker updated successfully.');
     }
 
     public function destroy(Sneaker $sneaker)
@@ -93,32 +123,41 @@ class AdminSneakerController extends Controller
         return redirect()->route('admin.dashboard')->with('success', 'Sneaker deleted successfully.');
     }
 
-    private function validatedSneakerData(Request $request): array
-{
-    $data = $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'brand_id' => ['required', 'integer', 'exists:brands,id'],
-        'price' => ['required', 'numeric', 'min:0'],
-        'stock_quantity' => ['required', 'integer', 'min:0'],
-        'image' => ['nullable', 'string', 'max:2048'],
-        'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-    ]);
+   private function validatedSneakerData(Request $request): array
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'brand_name' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:0'],
 
-    // Upload image to Laravel public storage
-    if ($request->hasFile('image_file')) {
-        $data['image'] = $request->file('image_file')
-            ->store('sneakers', 'public');
-    } else {
-        $data['image'] = trim($data['image'] ?? '') !== ''
-            ? trim($data['image'])
-            : null;
+            'sizes' => ['required', 'array'],
+            'sizes.38' => ['required', 'integer', 'min:0'],
+            'sizes.39' => ['required', 'integer', 'min:0'],
+            'sizes.40' => ['required', 'integer', 'min:0'],
+            'sizes.41' => ['required', 'integer', 'min:0'],
+            'sizes.42' => ['required', 'integer', 'min:0'],
+            'sizes.43' => ['required', 'integer', 'min:0'],
+            'sizes.44' => ['required', 'integer', 'min:0'],
+
+            'image' => ['nullable', 'string', 'max:2048'],
+            'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        if ($request->hasFile('image_file')) {
+            $data['image'] = $request->file('image_file')
+                ->store('sneakers', 'public');
+        } else {
+            $data['image'] = trim($data['image'] ?? '') !== ''
+                ? trim($data['image'])
+                : null;
+        }
+
+        unset($data['image_file']);
+
+        return $data;
     }
 
-    unset($data['image_file']);
-
-    return $data;
-
-    }
+   
 
     /** Create the seven EU sizes and split the entered total stock between them. */
     private function createSizeRows(Sneaker $sneaker, int $totalStock): void
