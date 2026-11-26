@@ -11,6 +11,8 @@ use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
 {
+    
+    private const SHIPPING_FEE = 3.99;
     // Display checkout page
     public function index(Request $request)
     {
@@ -74,10 +76,14 @@ class CheckoutController extends Controller
 
         $cartItems = $cartItems->values();
         $subtotal = $cartItems->sum('line_total');
+        $shipping = self::SHIPPING_FEE;
+        $total = $subtotal + $shipping;
 
         return view('checkout.index', compact(
             'cartItems',
-            'subtotal'
+            'subtotal',
+            'shipping',
+            'total'
         ));
     }
 
@@ -162,6 +168,8 @@ class CheckoutController extends Controller
                     'unit_price' => $unitPrice,
                 ];
             }
+
+            $totalAmount += self::SHIPPING_FEE;
 
             // Create overall Order
             $order = Order::create([
