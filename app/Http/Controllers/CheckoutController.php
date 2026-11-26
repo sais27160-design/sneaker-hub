@@ -219,6 +219,6 @@ class CheckoutController extends Controller
 
         return redirect()
             ->route('cart.index')
-            ->with('success', 'Your order #' . $order->id . ' has been placed successfully!');
+            ->with('success', 'Your order has been placed successfully!');
     }
 }
