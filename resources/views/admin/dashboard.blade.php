@@ -241,55 +241,21 @@
 
                     </div>
 
-                    <!-- Image URL and upload -->
+                    <!-- Image URL -->
                     <div class="col-span-2">
 
                         <label for="image" class="mb-2 block text-sm font-medium text-gray-300">
                             Image URL (Optional)
                         </label>
 
-                        <div class="flex items-center gap-3">
-
-                            <input
-                                id="image"
-                                name="image"
-                                type="text"
-                                value="{{ old('image', $editingSneaker?->image) }}"
-                                placeholder="https://example.com/sneaker.png"
-                                class="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#191522] px-4 py-3 text-white outline-none focus:border-purple-500"
-                            >
-
-                            <!-- Upload image button -->
-                            <label
-                                for="image_file"
-                                title="Upload sneaker image"
-                                class="flex h-14 w-14 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-[#191522] text-gray-400 transition hover:border-purple-500 hover:text-purple-400"
-                            >
-                                <svg
-                                    width="22"
-                                    height="22"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <rect x="3" y="3" width="18" height="18" rx="3"/>
-                                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                                    <path d="m21 15-5-5L5 21"/>
-                                </svg>
-                            </label>
-
-                            <input
-                                id="image_file"
-                                name="image_file"
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                class="sr-only"
-                            >
-
-                        </div>
+                        <input
+                            id="image"
+                            name="image"
+                            type="text"
+                            value="{{ old('image', $editingSneaker?->image) }}"
+                            placeholder="https://example.com/sneaker.png"
+                            class="w-full rounded-xl border border-white/10 bg-[#191522] px-4 py-3 text-white outline-none focus:border-purple-500"
+                        >
 
                     </div>
 
