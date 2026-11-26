@@ -139,6 +139,12 @@
                     @method('PUT')
                 @endif
 
+                @php
+                    $editingSizeStock = $editingSneaker
+                        ? $editingSneaker->sizes->keyBy(fn ($sizeRow) => (int) $sizeRow->size)
+                        : collect();
+                @endphp
+
                 <!-- Two-column form -->
                 <div class="grid grid-cols-2 gap-x-6 gap-y-4">
 
@@ -161,27 +167,20 @@
 
                     <!-- Brand -->
                     <div>
-                        <label for="brand_id" class="mb-2 block text-sm font-medium text-gray-300">
-                            Brand
+                        <label for="brand_name"
+                            class="mb-2 block text-sm font-medium text-gray-300">
+                            Brand Name
                         </label>
 
-                        <select
-                            id="brand_id"
-                            name="brand_id"
+                        <input
+                            id="brand_name"
+                            name="brand_name"
+                            type="text"
                             required
+                            value="{{ old('brand_name', $editingSneaker?->brand?->name) }}"
+                            placeholder="e.g. Nike, Adidas, Puma"
                             class="w-full rounded-xl border border-white/10 bg-[#191522] px-4 py-3 text-white outline-none focus:border-purple-500"
                         >
-                            <option value="">Choose brand</option>
-
-                            @foreach ($brands as $brand)
-                                <option
-                                    value="{{ $brand->id }}"
-                                    @selected(old('brand_id', $editingSneaker?->brand_id) == $brand->id)
-                                >
-                                    {{ $brand->name }}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
 
                     <!-- Price -->
@@ -203,22 +202,43 @@
                         >
                     </div>
 
-                    <!-- Stock -->
-                    <div>
-                        <label for="stock_quantity" class="mb-2 block text-sm font-medium text-gray-300">
-                            Stock Pairs
+                    <!-- Stock by EU Size -->
+                    <div class="col-span-2">
+
+                        <label class="mb-3 block text-sm font-medium text-gray-300">
+                            Stock by EU Size
                         </label>
 
-                        <input
-                            id="stock_quantity"
-                            name="stock_quantity"
-                            type="number"
-                            min="0"
-                            step="1"
-                            required
-                            value="{{ old('stock_quantity', $editingSneaker ? $editingSneaker->sizes->sum('stock_quantity') : 21) }}"
-                            class="w-full rounded-xl border border-white/10 bg-[#191522] px-4 py-3 text-white outline-none focus:border-purple-500"
-                        >
+                        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+
+                            @foreach ([38, 39, 40, 41, 42, 43, 44] as $size)
+
+                                <div>
+                                    <label for="size_{{ $size }}"
+                                        class="mb-2 block text-sm text-gray-400">
+                                        EU {{ $size }}
+                                    </label>
+
+                                    <input
+                                        id="size_{{ $size }}"
+                                        name="sizes[{{ $size }}]"
+                                        type="number"
+                                        min="0"
+                                        step="1"
+                                        required
+                                        value="{{ old('sizes.' . $size, $editingSneaker ? ($editingSizeStock->get($size)?->stock_quantity ?? 0) : 3) }}"
+                                        class="w-full rounded-xl border border-white/10 bg-[#191522] px-4 py-3 text-white outline-none focus:border-purple-500"
+                                    >
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                        <p class="mt-3 text-xs text-gray-500">
+                            Enter the available pairs for each shoe size.
+                        </p>
+
                     </div>
 
                     <!-- Image URL and upload -->
