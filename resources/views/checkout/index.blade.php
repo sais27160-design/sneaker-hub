@@ -409,7 +409,7 @@
                     </span>
 
                     <span class="font-semibold">
-                        &#8364;{{ number_format($subtotal, 2) }}
+                        &euro;{{ number_format($subtotal, 2) }}
                     </span>
                 </div>
 
@@ -421,7 +421,7 @@
                     </span>
 
                     <span class="text-sm text-gray-400">
-                        Not calculated
+                        €3.99
                     </span>
                 </div>
 
@@ -434,14 +434,14 @@
                     </span>
 
                     <span class="text-2xl font-extrabold">
-                        &#8364;{{ number_format($subtotal, 2) }}
+                        &#8364;{{ number_format($subtotal + 3.99, 2) }}
                     </span>
 
                 </div>
 
 
                 <p class="mt-4 text-xs leading-6 text-gray-500">
-                    Shipping costs are not included in this total. This project currently records orders without processing online payments.
+                    A fixed shipping fee of €3.99 is included in this total. This project currently records orders without processing online payments.
                 </p>
 
 
